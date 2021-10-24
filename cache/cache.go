@@ -74,7 +74,6 @@ func CachePageMetaData(tags *[]model.MetaTag, address string) error {
 				log.Printf("cached metadata for page %s\n", pageId)
 				return nil
 			} else {
-				log.Printf("unable to cache value %s with key %s\n", serialized, pageId)
 				return cacheError
 			}
 		}else {

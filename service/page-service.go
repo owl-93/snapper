@@ -37,7 +37,8 @@ func GetMetaTagsForPage(address string) (*[]model.MetaTag, error) {
 	if err == nil && cache.IsInitialized() {
 		cacheError := cache.CachePageMetaData(tags, address)
 		if cacheError != nil {
-			return tags, cacheError
+			log.Println("WARN - unable to cache data")
+			return tags, nil
 		}
 	}
 	return tags, err
