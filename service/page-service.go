@@ -15,14 +15,16 @@ import (
 	handles fetching and webpages HTML and parsing and extracting metadata tags from it.
 	Interfaces with a caching layer as well
 */
-func GetMetaTagsForPage(address string) (*[]model.MetaTag, error) {
+func GetMetaTagsForPage(address string, disableCache bool) (*[]model.MetaTag, error) {
 	log.Printf("get meta data for %s\n", address)
 	//check the cache if configured
-	if cache.IsInitialized() {
+	if cache.IsInitialized() && !disableCache {
 		tags, e := cache.CheckCacheForPage(address)
 		if e == nil && tags != nil {
 			return tags, nil
 		}
+	}else {
+		log.Println("(cache read disabled)")
 	}
 	//Cache missed or errored, fetch and add page to cache
 	response, err := http.Get(address)

@@ -13,7 +13,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func InitRoutes(router *gin.Engine) {
+var (
+	options *model.SnapperConfig
+)
+
+func InitRoutes(router *gin.Engine, config *model.SnapperConfig ) {
+	options = config
 	router.POST("/", snapper)
 	router.GET("/test/:testNum", tester)
 }
@@ -39,7 +44,7 @@ func snapper(c *gin.Context) {
 	if len(request.Page) == 0 {
 		c.String(http.StatusBadRequest, "must include site query param")
 	} else {
-		tags, err := service.GetMetaTagsForPage(request.Page)
+		tags, err := service.GetMetaTagsForPage(request.Page, options.DisableCache || request.Refresh)
 		handleTagClientResponse(c, tags, err)
 	}
 }
