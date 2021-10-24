@@ -32,15 +32,18 @@ you can tell snapper to use a different port by passing the port as a comman lin
 
 By default, snapper runs on port 8888
 ## Using Snapper
-To snap a webpage's Opengraph metadata, just make a REST GET request to / with
-the target website specified using the query parameter `site`
+To snap a webpage's Opengraph metadata, just make a REST POST request to / with
+the target website specified in the request body using the key `page`. You can optionally
+pass the `forceRefresh` option in the request body to force snapper to fetch the latest metadata
+and not use any cached values if present.
 
 ## Example
 ```bash
 curl --location --request POST 'http://localhost:8888/' 
 --header 'Content-Type: application/json' 
 --data-raw '{
-    "page": "https://code.visualstudio.com/download"
+    "page": "https://code.visualstudio.com/download",
+    "forceRefresh" : true
 }'
 ```
 
