@@ -70,7 +70,7 @@ func CachePageMetaData(tags *[]model.MetaTag, address string) error {
 		log.Printf("caching meta data for %s\n", pageId)
 		if serialized, marshalError := json.Marshal(*tags); marshalError == nil {
 			ctx := cache.Context()
-			if cacheError := cache.Set(ctx, pageId, string(serialized), time.Minute).Err(); cacheError == nil {
+			if cacheError := cache.Set(ctx, pageId, string(serialized), time.Hour * 24).Err(); cacheError == nil {
 				log.Printf("cached metadata for page %s\n", pageId)
 				return nil
 			} else {

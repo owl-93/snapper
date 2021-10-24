@@ -37,7 +37,11 @@ the target website specified using the query parameter `site`
 
 ## Example
 ```bash
-curl http://localhost:8888/?site=https://code.visualstudio.com/download
+curl --location --request POST 'http://localhost:8888/' 
+--header 'Content-Type: application/json' 
+--data-raw '{
+    "page": "https://code.visualstudio.com/download"
+}'
 ```
 
 Response
