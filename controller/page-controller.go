@@ -2,15 +2,13 @@ package controller
 
 import (
 	"encoding/json"
+	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"snapper/model"
 	"snapper/service"
 	"snapper/utils"
-	"strconv"
-
-	"github.com/gin-gonic/gin"
 )
 
 var (
@@ -20,7 +18,6 @@ var (
 func InitRoutes(router *gin.Engine, config *model.SnapperConfig ) {
 	options = config
 	router.POST("/", snapper)
-	router.GET("/test/:testNum", tester)
 }
 
 /*
@@ -44,46 +41,32 @@ func snapper(c *gin.Context) {
 	if len(request.Page) == 0 {
 		c.String(http.StatusBadRequest, "must include site query param")
 	} else {
-		tags, err := service.GetMetaTagsForPage(request.Page, options.DisableCache || request.Refresh)
-		handleTagClientResponse(c, tags, err)
+		tags, err := service.GetMetaTagsForPage(request.Page, options.DisableCache || request.Refresh, options.CacheTTL)
+		handleTagClientResponse(c, tags, err, request.Raw)
 	}
-}
-
-
-/*
-This endpoint tests the service with some given HTML
-*/
-func tester(c *gin.Context) {
-	testHtml := getTestHtml(c)
-	tags, err := service.GetMetaTagsForTest(testHtml)
-	handleTagClientResponse(c, tags, err)
-}
-
-
-/*
-Extract the path and load appropriate test HTML from utils
- */
-func getTestHtml(c *gin.Context) string {
-	testNum, _ := c.Params.Get("testNum")
-	idx, err := strconv.Atoi(testNum)
-	if err != nil {
-		println("could not convert", testNum, "to an int")
-		return utils.Tests[0]
-	}
-	return utils.Tests[idx]
 }
 
 
 /*
 Helper function to avoid duplicating this code in each Handler
 */
-func handleTagClientResponse(c *gin.Context, tags *[]model.MetaTag, err error) {
+func handleTagClientResponse(c *gin.Context, tags *[]model.MetaTag, err error, raw bool) {
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
 		return
 	} else if tags == nil {
 		c.Status(http.StatusNoContent)
+	} else if len(*tags) == 0 {
+		c.Status(http.StatusNoContent)
 	} else {
-		c.IndentedJSON(http.StatusOK, tags)
+		if raw {
+			c.IndentedJSON(http.StatusOK, tags)
+		}else {
+			if converted, err := utils.ToSnapperResult(tags); err == nil {
+				c.IndentedJSON(http.StatusOK, converted)
+			}else {
+				c.String(http.StatusInternalServerError, "unable to convert meta tags to snapper response")
+			}
+		}
 	}
 }

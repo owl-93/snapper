@@ -15,7 +15,7 @@ import (
 	handles fetching and webpages HTML and parsing and extracting metadata tags from it.
 	Interfaces with a caching layer as well
 */
-func GetMetaTagsForPage(address string, disableCache bool) (*[]model.MetaTag, error) {
+func GetMetaTagsForPage(address string, disableCache bool, ttl int64) (*[]model.MetaTag, error) {
 	log.Printf("get meta data for %s\n", address)
 	//check the cache if configured
 	if cache.IsInitialized() && !disableCache {
@@ -37,7 +37,7 @@ func GetMetaTagsForPage(address string, disableCache bool) (*[]model.MetaTag, er
 	}
 	tags, err := utils.ExtractMetaTags(parsed)
 	if err == nil && cache.IsInitialized() {
-		cacheError := cache.CachePageMetaData(tags, address)
+		cacheError := cache.SetCachePageMetaData(tags, address, ttl)
 		if cacheError != nil {
 			log.Println("WARN - unable to cache data")
 			return tags, nil

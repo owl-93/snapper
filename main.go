@@ -29,6 +29,7 @@ func getAppConfig() *model.SnapperConfig {
 	port := flag.Int("port", defaultPort, "port to run snapper on (default 8888)")
 	disableCache := flag.Bool("no-cache", false, "disable caching for the application (not recommended)")
 	redisUri := flag.String("cache", "", "connection uri for redis cache (defaults to localhost:6379)")
+	cacheTtl := flag.Int("cache-ttl", 24, "Number of hours that cache entries are valid for")
 	flag.Parse()
 
 	//build config
@@ -39,7 +40,8 @@ func getAppConfig() *model.SnapperConfig {
 	}
 	config.RedisConfig = redisConfig
 	config.DisableCache = *disableCache
-	log.Printf("configuring snapper with options:\n\nport: %d\ncache disabled: %v\nredis options: %+v\n\n", config.Port, config.DisableCache, *config.RedisConfig)
+	config.CacheTTL = int64(*cacheTtl)
+	log.Printf("configuring snapper with options:\n\nport: %d\ncache disabled: %v\ncache ttl: %d hours\nredis options: %+v\n\n", config.Port, config.DisableCache, config.CacheTTL, *config.RedisConfig)
 	return config
 }
 

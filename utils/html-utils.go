@@ -13,8 +13,6 @@ import (
 )
 
 
-
-
 const (
 	MetaKey = "property"
 	MetaValue = "content"
@@ -100,37 +98,26 @@ func GetAddressKey(address string) (string, error) {
 }
 
 
-//Test HTML for development
-var Tests = [3]string{
-				`<html>
-					<head>
-						<meta property="testtag0" content="testvalue0"/>
-					</head>
-
-					<body>
-					</body>
-				</html>`,
-
-				`<!DOCTYPE html/>
-				<html>
-					<head>
-						<meta property="testtag1" content="testvalue1"/>
-					</head>
-					<body>
-					</body>
-				</html>`,
-
-				`<html>
-					<head>
-						<meta property="testtag2" content="testvalue2"/>
-					</head>
-					<body>
-						<p>p0 text</p>
-						<p>p1 text</p>
-						<div>
-							<p>p2 text</p>
-							<p>p3 text</p>
-						</div>
-					</body>
-				</html>`,
+/*
+	converts a list of meta tags to a utility structure for JSON response
+ */
+func ToSnapperResult(tags *[]model.MetaTag) (*model.SnapperResult, error) {
+	snapperResult := model.SnapperResult{}
+	for _, tag := range *tags {
+		switch tag.Name {
+		case model.TitleKey:
+			snapperResult.Title = tag.Value
+		case model.ImageKey:
+			snapperResult.Image = tag.Value
+		case model.DescKey:
+			snapperResult.Description = tag.Value
+		case model.UrlKey:
+			snapperResult.Url = tag.Value
+		case model.TypeKey:
+			snapperResult.Type = tag.Value
+		case model.LocalKey:
+			snapperResult.Locale = tag.Value
+		}
+	}
+	return &snapperResult, nil
 }

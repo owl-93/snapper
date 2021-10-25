@@ -8,6 +8,7 @@ type SnapperConfig struct {
 	Port int
 	RedisConfig *redis.Options
 	DisableCache bool
+	CacheTTL int64
 }
 
 type MetaTag struct {
@@ -18,4 +19,5 @@ type MetaTag struct {
 type SnapperRequest struct {
 	Page string `json:"page"`
 	Refresh bool `json:"forceRefresh"`
+	Raw bool `json:"raw"`
 }

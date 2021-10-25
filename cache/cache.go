@@ -12,6 +12,11 @@ import (
 	"snapper/utils"
 )
 
+
+const (
+	defaultTtl = 24
+)
+
 var (
 	cache = redis.NewClient(&redis.Options{})
 )
@@ -61,16 +66,16 @@ func CheckCacheForPage(address string) (*[]model.MetaTag, error) {
 	function to cache the page metadata in the redis cache.
 	//TODO: add configurable TTL for cache life
 */
-func CachePageMetaData(tags *[]model.MetaTag, address string) error {
+func SetCachePageMetaData(tags *[]model.MetaTag, address string, ttl int64) error {
 	if cache == nil {
-		return errors.New("cache unitialized")
+		return errors.New("cache not initialized")
 	}
 
 	if pageId, err := utils.GetAddressKey(address); err == nil {
 		log.Printf("caching meta data for %s\n", pageId)
 		if serialized, marshalError := json.Marshal(*tags); marshalError == nil {
 			ctx := cache.Context()
-			if cacheError := cache.Set(ctx, pageId, string(serialized), time.Hour * 24).Err(); cacheError == nil {
+			if cacheError := cache.Set(ctx, pageId, string(serialized), time.Duration(ttl) * time.Hour).Err(); cacheError == nil {
 				log.Printf("cached metadata for page %s\n", pageId)
 				return nil
 			} else {
