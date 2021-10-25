@@ -24,7 +24,7 @@ go build -o <executable name> .
 ```
 
 ### Specifying a different port
-you can tell snapper to use a different port by passing the port as a comman line argument
+you can tell snapper to use a different port by passing the port as a command line argument
 ```bash
 ./snapper 8081
 ```
