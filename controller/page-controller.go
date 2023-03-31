@@ -2,20 +2,21 @@ package controller
 
 import (
 	"encoding/json"
-	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"log"
 	"net/http"
-	"snapper/model"
-	"snapper/service"
-	"snapper/utils"
+
+	"github.com/gin-gonic/gin"
+	"github.com/owl-93/snapper/model"
+	"github.com/owl-93/snapper/service"
+	"github.com/owl-93/snapper/utils"
 )
 
 var (
 	options *model.SnapperConfig
 )
 
-func InitRoutes(router *gin.Engine, config *model.SnapperConfig ) {
+func InitRoutes(router *gin.Engine, config *model.SnapperConfig) {
 	options = config
 	router.POST("/", snapper)
 }
@@ -46,7 +47,6 @@ func snapper(c *gin.Context) {
 	}
 }
 
-
 /*
 Helper function to avoid duplicating this code in each Handler
 */
@@ -61,10 +61,10 @@ func handleTagClientResponse(c *gin.Context, tags *[]model.MetaTag, err error, r
 	} else {
 		if raw {
 			c.IndentedJSON(http.StatusOK, tags)
-		}else {
+		} else {
 			if converted, err := utils.ToSnapperResult(tags); err == nil {
 				c.IndentedJSON(http.StatusOK, converted)
-			}else {
+			} else {
 				c.String(http.StatusInternalServerError, "unable to convert meta tags to snapper response")
 			}
 		}

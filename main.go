@@ -8,9 +8,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v8"
-
-	"snapper/controller"
-	"snapper/model"
+	"github.com/owl-93/snapper/controller"
+	"github.com/owl-93/snapper/model"
 )
 
 const (
