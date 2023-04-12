@@ -7,11 +7,9 @@ import (
 	"time"
 
 	"github.com/go-redis/redis/v8"
-
-	"snapper/model"
-	"snapper/utils"
+	"github.com/owl-93/snapper/model"
+	"github.com/owl-93/snapper/utils"
 )
-
 
 const (
 	defaultTtl = 24
@@ -26,7 +24,7 @@ func IsInitialized() bool {
 }
 
 /*
-	returns a client if initialized otherwise throws an error
+returns a client if initialized otherwise throws an error
 */
 func GetInstance() (*redis.Client, error) {
 	if !IsInitialized() {
@@ -36,8 +34,8 @@ func GetInstance() (*redis.Client, error) {
 }
 
 /*
-	Checks the cache given a URL, if there is an entry it unmarshalls the JSON and returns
-	a pointer to the data
+Checks the cache given a URL, if there is an entry it unmarshalls the JSON and returns
+a pointer to the data
 */
 func CheckCacheForPage(address string) (*[]model.MetaTag, error) {
 	if cache == nil {
@@ -63,8 +61,8 @@ func CheckCacheForPage(address string) (*[]model.MetaTag, error) {
 }
 
 /*
-	function to cache the page metadata in the redis cache.
-	//TODO: add configurable TTL for cache life
+function to cache the page metadata in the redis cache.
+//TODO: add configurable TTL for cache life
 */
 func SetCachePageMetaData(tags *[]model.MetaTag, address string, ttl int64) error {
 	if cache == nil {
@@ -75,13 +73,13 @@ func SetCachePageMetaData(tags *[]model.MetaTag, address string, ttl int64) erro
 		log.Printf("caching meta data for %s\n", pageId)
 		if serialized, marshalError := json.Marshal(*tags); marshalError == nil {
 			ctx := cache.Context()
-			if cacheError := cache.Set(ctx, pageId, string(serialized), time.Duration(ttl) * time.Hour).Err(); cacheError == nil {
+			if cacheError := cache.Set(ctx, pageId, string(serialized), time.Duration(ttl)*time.Hour).Err(); cacheError == nil {
 				log.Printf("cached metadata for page %s\n", pageId)
 				return nil
 			} else {
 				return cacheError
 			}
-		}else {
+		} else {
 			log.Println("could not marshal tags into object")
 			return marshalError
 		}

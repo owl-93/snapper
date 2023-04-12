@@ -5,22 +5,20 @@ import (
 	"fmt"
 	"log"
 	"net/url"
-	"snapper/model"
 	"strings"
 
+	"github.com/owl-93/snapper/model"
 	"golang.org/x/net/html"
 	"golang.org/x/net/html/atom"
 )
 
-
 const (
-	MetaKey = "property"
+	MetaKey   = "property"
 	MetaValue = "content"
 )
 
-
 /*
-	Extracts the meta tags from a given html string
+Extracts the meta tags from a given html string
 */
 func ExtractMetaTags(htmlString string) (*[]model.MetaTag, error) {
 	doc, err := html.Parse(strings.NewReader(htmlString))
@@ -39,17 +37,18 @@ func ExtractMetaTags(htmlString string) (*[]model.MetaTag, error) {
 }
 
 /*
-	Locate the documents head node
+Locate the documents head node
 */
 func getDocHead(doc *html.Node) (*html.Node, error) {
 	if doc.Type == html.DocumentNode {
 		curNode := doc.FirstChild
-		for ; curNode != nil && curNode.DataAtom != atom.Html; curNode = curNode.NextSibling {}
+		for ; curNode != nil && curNode.DataAtom != atom.Html; curNode = curNode.NextSibling {
+		}
 		if curNode != nil {
 			curNode = curNode.FirstChild
 			if curNode != nil && curNode.DataAtom == atom.Head {
 				return curNode, nil
-			}else {
+			} else {
 				return nil, errors.New("unable to find head element in document")
 			}
 		}
@@ -60,7 +59,7 @@ func getDocHead(doc *html.Node) (*html.Node, error) {
 }
 
 /*
-	Extract the meta tags from a page's head
+Extract the meta tags from a page's head
 */
 func getMetaTags(headNode *html.Node) (*[]model.MetaTag, error) {
 	var tags []model.MetaTag
@@ -85,9 +84,8 @@ func getMetaTags(headNode *html.Node) (*[]model.MetaTag, error) {
 	return &tags, nil
 }
 
-
 /*
-	Extract key from page URL. (strip protocol and query params)
+Extract key from page URL. (strip protocol and query params)
 */
 func GetAddressKey(address string) (string, error) {
 	parsed, e := url.Parse(address)
@@ -97,10 +95,9 @@ func GetAddressKey(address string) (string, error) {
 	return fmt.Sprintf("%s%s", parsed.Host, parsed.Path), nil
 }
 
-
 /*
-	converts a list of meta tags to a utility structure for JSON response
- */
+converts a list of meta tags to a utility structure for JSON response
+*/
 func ToSnapperResult(tags *[]model.MetaTag) (*model.SnapperResult, error) {
 	snapperResult := model.SnapperResult{}
 	for _, tag := range *tags {

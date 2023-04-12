@@ -6,14 +6,15 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"snapper/cache"
-	"snapper/model"
-	"snapper/utils"
+
+	"github.com/owl-93/snapper/cache"
+	"github.com/owl-93/snapper/model"
+	"github.com/owl-93/snapper/utils"
 )
 
 /*
-	handles fetching and webpages HTML and parsing and extracting metadata tags from it.
-	Interfaces with a caching layer as well
+handles fetching and webpages HTML and parsing and extracting metadata tags from it.
+Interfaces with a caching layer as well
 */
 func GetMetaTagsForPage(address string, disableCache bool, ttl int64) (*[]model.MetaTag, error) {
 	log.Printf("get meta data for %s\n", address)
@@ -23,7 +24,7 @@ func GetMetaTagsForPage(address string, disableCache bool, ttl int64) (*[]model.
 		if e == nil && tags != nil {
 			return tags, nil
 		}
-	}else {
+	} else {
 		log.Println("(cache read disabled)")
 	}
 	//Cache missed or errored, fetch and add page to cache
@@ -47,14 +48,14 @@ func GetMetaTagsForPage(address string, disableCache bool, ttl int64) (*[]model.
 }
 
 /*
-	Extract meta tags for test html
+Extract meta tags for test html
 */
 func GetMetaTagsForTest(htmlContent string) (*[]model.MetaTag, error) {
 	return utils.ExtractMetaTags(htmlContent)
 }
 
 /*
-	fetches a requested page and returns the result as a string of HTML
+fetches a requested page and returns the result as a string of HTML
 */
 func getHTML(response *http.Response) (string, error) {
 	if response == nil {
